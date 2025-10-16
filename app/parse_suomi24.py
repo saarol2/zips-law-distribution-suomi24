@@ -58,17 +58,16 @@ def save_batch_to_db(records):
 
 # PARSING LOGIC
 def parse_vrt_from_zip(zip_path):
-    """Stream zip file contents without extracting."""
+    """Streams .vrt files from a zip archive."""
     batch = []
     processed = 0
 
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         vrt_files = sorted([n for n in zip_ref.namelist() if n.endswith('.vrt')])
-        print(f"Found {len(vrt_files)} .vrt files in zip.", flush=True)
+        print(f"Found {len(vrt_files)} .vrt files in the zip.", flush=True)
 
-        if vrt_files:
-            filename = vrt_files[0]
-            print(f"Processing only file: {filename}", flush=True)
+        for filename in vrt_files:
+            print(f"Processing file: {filename}", flush=True)
             with zip_ref.open(filename) as f:
                 text_block, date, title = [], None, None
                 for raw_line in f:
@@ -109,6 +108,6 @@ def parse_vrt_from_zip(zip_path):
 
     if batch:
         save_batch_to_db(batch)
-        print(f"Processed {len(batch)} messages.", flush=True)
+        print(f"Saved {len(batch)} messages.", flush=True)
 
     print("Done!", flush=True)
