@@ -40,9 +40,17 @@ CREATE TABLE IF NOT EXISTS messages (
 """)
 conn.commit()
 
+
 print("Database connection successful and table created!")
 
-parse_vrt_from_folder(ZIP_PATH)
+# Only parse if messages table is empty
+cur.execute("SELECT COUNT(*) FROM messages;")
+row_count = cur.fetchone()[0]
+if row_count == 0:
+    print("No messages found in database, parsing corpus...")
+    parse_vrt_from_folder(ZIP_PATH)
+else:
+    print(f"Database already contains {row_count} messages, skipping parsing.")
 
 cur.close()
 conn.close()
