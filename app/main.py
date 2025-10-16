@@ -1,5 +1,6 @@
 import psycopg2
 import time
+from parse_suomi24 import parse_vrt_from_folder
 
 # Odotetaan hetki, että tietokanta ehtii käynnistyä
 time.sleep(5)
@@ -27,6 +28,8 @@ CREATE TABLE IF NOT EXISTS messages (
 conn.commit()
 
 print("Database connection successful and table created!")
+
+parse_vrt_from_folder("/data/vrt")
 
 cur.close()
 conn.close()
