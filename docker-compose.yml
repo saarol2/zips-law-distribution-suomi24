@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    container_name: suomi24db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: suomi24
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: suomi24app
+    depends_on:
+      - db
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: ["python", "main.py"]
+
+volumes:
+  postgres_data:
