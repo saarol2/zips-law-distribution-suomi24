@@ -48,8 +48,7 @@ def parse_vrt_from_folder(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         vrt_files = sorted([name for name in zip_ref.namelist() if name.endswith('.vrt')])
         print(f"Found {len(vrt_files)} vrt files in the zip.")
-        if vrt_files:
-            filename = vrt_files[0]
+        for filename in vrt_files:
             print(f"Processing file: {filename}")
             with zip_ref.open(filename) as f:
                 text_block = []
