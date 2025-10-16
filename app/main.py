@@ -28,13 +28,14 @@ conn = psycopg2.connect(
 )
 cur = conn.cursor()
 
-# Create the messages table if it does not exist
+ # Create the messages table if it does not exist
 cur.execute("""
 CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     title TEXT,
     content TEXT,
-    date DATE
+    date DATE,
+    query_type TEXT
 );
 """)
 conn.commit()

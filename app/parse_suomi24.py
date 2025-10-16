@@ -15,17 +15,29 @@ DB_CONFIG = {
     "port": os.environ.get("POSTGRES_PORT", "5432")
 }
 
-hate_keywords = ["vihapuhe", "rasismi", "rasistinen", "syrjintä",
+
+# Query 1: Hate speech keywords
+hate_keywords = [
+    "vihapuhe", "rasismi", "rasistinen", "syrjintä",
     "vihaa", "viha", "vihaan", "neekeri", "homo", "lesbo",
     "maahanmuuttaja", "mamu", "muslimi", "juutalainen",
-    "homofobia", "antisemitismi", "transu", "transsukupuolinen", "natsi"]
+    "homofobia", "antisemitismi", "transu", "natsi"
+]
+
+# Query 2: Friendly speech keywords
+friendly_keywords = [
+    "ystävällinen", "kohteliaisuus", "vapaus",
+    "ystävällisyys", "kunnioitus", "reilu", "tasa-arvo",
+    "suvaitsevaisuus", "rauha", "ystävä",
+    "ystävällisesti", "kaveri"
+]
 
 def save_to_db(records):
     conn = psycopg2.connect(**DB_CONFIG)
     cur = conn.cursor()
     execute_values(
         cur,
-        "INSERT INTO messages (title, content, date) VALUES %s",
+        "INSERT INTO messages (title, content, date, query_type) VALUES %s",
         records
     )
     conn.commit()
@@ -36,7 +48,6 @@ def parse_vrt_from_folder(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         vrt_files = sorted([name for name in zip_ref.namelist() if name.endswith('.vrt')])
         print(f"Found {len(vrt_files)} vrt files in the zip.")
-
         if vrt_files:
             filename = vrt_files[0]
             print(f"Processing file: {filename}")
@@ -62,9 +73,17 @@ def parse_vrt_from_folder(zip_path):
 
                     elif line.startswith("</text>"):
                         content = " ".join(text_block).lower()
-                        if any(term in content for term in hate_keywords):
-                            print(f"Keyword found: {date} {content[:100]}...")
-                            save_to_db([(title, content, date)])
+                        found_hate = any(term in content for term in hate_keywords)
+                        found_friendly = any(term in content for term in friendly_keywords)
+                        if found_hate or found_friendly:
+                            if found_hate and found_friendly:
+                                query_type = "both"
+                            elif found_hate:
+                                query_type = "hate"
+                            else:
+                                query_type = "friendly"
+                            print(f"MATCH ({query_type.upper()}): {date} {content[:100]}...")
+                            save_to_db([(title, content, date, query_type)])
                         text_block = []
 
                     elif not line.startswith("<"):
