@@ -2,7 +2,7 @@
 import psycopg2
 import time
 import os
-from parse_suomi24 import parse_vrt_from_folder
+from parse_suomi24 import parse_vrt_from_zip
 
 
 # Read settings from environment variables
@@ -48,7 +48,7 @@ cur.execute("SELECT COUNT(*) FROM messages;")
 row_count = cur.fetchone()[0]
 if row_count == 0:
     print("No messages found in database, parsing corpus...")
-    parse_vrt_from_folder(ZIP_PATH)
+    parse_vrt_from_zip(ZIP_PATH)
 else:
     print(f"Database already contains {row_count} messages, skipping parsing.")
 
