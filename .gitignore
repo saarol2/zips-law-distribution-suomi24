@@ -32,3 +32,5 @@ postgres_data/
 # Zip and data files
 *.zip
 /data/
+
+suomi24_backup.sql
