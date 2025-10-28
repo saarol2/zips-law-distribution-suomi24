@@ -3,7 +3,6 @@ import re
 import zipfile
 import psycopg2
 from io import StringIO
-from psycopg2 import sql
 
 
 # CONFIG
@@ -19,7 +18,7 @@ ZIP_PATH = "/data/suomi24-2001-2017-vrt-v1-1.zip"
 BATCH_SIZE = 20000
 
 
-# KEYWORDS
+# Chosen keywords for hate speech in task 1 
 hate_keywords = [
     "vihapuhe", "rasismi", "rasistinen", "syrjintä",
     "vihaa", "viha", "vihaan", "neekeri", "homo", "lesbo",
@@ -27,6 +26,7 @@ hate_keywords = [
     "homofobia", "antisemitismi", "transu", "natsi"
 ]
 
+# Chosen keywords for friendly speech in task 2
 friendly_keywords = [
     "ystävällinen", "kohteliaisuus", "vapaus",
     "ystävällisyys", "kunnioitus", "reilu", "tasa-arvo",
